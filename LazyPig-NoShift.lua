@@ -347,13 +347,11 @@ function LazyPig_OnUpdate()
 		LazyPig_GreySellRepair();
 	end
 	
-	if shiftstatus or altstatus then
-		if QuestFrameDetailPanel:IsVisible() then
-			AcceptQuest();
-		end
-	elseif QuestRecord["details"] and not shiftstatus then
-		LazyPig_RecordQuest();
-	end
+if QuestFrameDetailPanel:IsVisible() then
+    AcceptQuest();
+elseif QuestRecord["details"] then
+    LazyPig_RecordQuest();
+end
 	
 	if not afk_active and player_bg_confirm then
 		Check_Bg_Status();
@@ -1243,9 +1241,11 @@ function LazyPig_ReplyQuest(event)
                     return
                 end
             end
-        elseif table.getn(ActiveQuest) == 0 and table.getn(AvailableQuest) == 1 or IsAltKeyDown() and table.getn(AvailableQuest) > 0 then
+        elseif table.getn(ActiveQuest) == 0 and table.getn(AvailableQuest) == 1 then
+            -- Automatically accept the only available quest without requiring shift
             LazyPig_SelectGossipAvailableQuest(1, true)
-        elseif table.getn(ActiveQuest) == 1 and table.getn(AvailableQuest) == 0 or IsAltKeyDown() and table.getn(ActiveQuest) > 0 then
+        elseif table.getn(ActiveQuest) == 1 and table.getn(AvailableQuest) == 0 then
+            -- Automatically accept the only active quest without requiring shift
             local nr = table.getn(ActiveQuest)
             if QuestRecord["progress"] and (nr - QuestRecord["index"]) > 0 then
                 QuestRecord["index"] = QuestRecord["index"] + 1
@@ -1267,9 +1267,11 @@ function LazyPig_ReplyQuest(event)
                     return
                 end
             end
-        elseif table.getn(ActiveQuest) == 0 and table.getn(AvailableQuest) == 1 or IsAltKeyDown() and table.getn(AvailableQuest) > 0 then
+        elseif table.getn(ActiveQuest) == 0 and table.getn(AvailableQuest) == 1 then
+            -- Automatically accept the only available quest without requiring shift
             LazyPig_SelectAvailableQuest(1, true)
-        elseif table.getn(ActiveQuest) == 1 and table.getn(AvailableQuest) == 0 or IsAltKeyDown() and table.getn(ActiveQuest) > 0 then
+        elseif table.getn(ActiveQuest) == 1 and table.getn(AvailableQuest) == 0 then
+            -- Automatically accept the only active quest without requiring shift
             local nr = table.getn(ActiveQuest)
             if QuestRecord["progress"] and (nr - QuestRecord["index"]) > 0 then
                 QuestRecord["index"] = QuestRecord["index"] + 1
