@@ -1224,66 +1224,57 @@ function LazyPig_ReplyQuest(event)
     -- Remove the IsShiftKeyDown() check so that the behavior is always active
     if QuestRecord["details"] then
         UIErrorsFrame:Clear();
-        UIErrorsFrame:AddMessage("Replaying: "..QuestRecord["details"])
+        UIErrorsFrame:AddMessage("Replaying: "..QuestRecord["details"]);
     end
     
     if event == "GOSSIP_SHOW" then
         if QuestRecord["details"] then
-            for blockindex,blockmatch in pairs(ActiveQuest) do
+            -- Replay the recorded quest if it exists
+            for blockindex, blockmatch in pairs(ActiveQuest) do
                 if blockmatch == QuestRecord["details"] then
-                    Original_SelectGossipActiveQuest(blockindex)
-                    return
+                    Original_SelectGossipActiveQuest(blockindex);
+                    return;
                 end
             end
-            for blockindex,blockmatch in pairs(AvailableQuest) do
+            for blockindex, blockmatch in pairs(AvailableQuest) do
                 if blockmatch == QuestRecord["details"] then
-                    Original_SelectGossipAvailableQuest(blockindex)
-                    return
+                    Original_SelectGossipAvailableQuest(blockindex);
+                    return;
                 end
             end
-        elseif table.getn(ActiveQuest) == 0 and table.getn(AvailableQuest) == 1 then
-            -- Automatically accept the only available quest without requiring shift
-            LazyPig_SelectGossipAvailableQuest(1, true)
-        elseif table.getn(ActiveQuest) == 1 and table.getn(AvailableQuest) == 0 then
-            -- Automatically accept the only active quest without requiring shift
-            local nr = table.getn(ActiveQuest)
-            if QuestRecord["progress"] and (nr - QuestRecord["index"]) > 0 then
-                QuestRecord["index"] = QuestRecord["index"] + 1
-                nr = nr - QuestRecord["index"]
-            end
-            LazyPig_SelectGossipActiveQuest(nr, true)    
+        elseif table.getn(AvailableQuest) > 0 then
+            -- Automatically select the first available quest if there are multiple quests
+            Original_SelectGossipAvailableQuest(1);
+        elseif table.getn(ActiveQuest) > 0 then
+            -- Automatically select the first active quest if there are no available quests
+            Original_SelectGossipActiveQuest(1);
         end
     elseif event == "QUEST_GREETING" then
         if QuestRecord["details"] then
-            for blockindex,blockmatch in pairs(ActiveQuest) do
+            -- Replay the recorded quest if it exists
+            for blockindex, blockmatch in pairs(ActiveQuest) do
                 if blockmatch == QuestRecord["details"] then
-                    Original_SelectActiveQuest(blockindex)
-                    return
+                    Original_SelectActiveQuest(blockindex);
+                    return;
                 end
             end
-            for blockindex,blockmatch in pairs(AvailableQuest) do
+            for blockindex, blockmatch in pairs(AvailableQuest) do
                 if blockmatch == QuestRecord["details"] then
-                    Original_SelectAvailableQuest(blockindex)
-                    return
+                    Original_SelectAvailableQuest(blockindex);
+                    return;
                 end
             end
-        elseif table.getn(ActiveQuest) == 0 and table.getn(AvailableQuest) == 1 then
-            -- Automatically accept the only available quest without requiring shift
-            LazyPig_SelectAvailableQuest(1, true)
-        elseif table.getn(ActiveQuest) == 1 and table.getn(AvailableQuest) == 0 then
-            -- Automatically accept the only active quest without requiring shift
-            local nr = table.getn(ActiveQuest)
-            if QuestRecord["progress"] and (nr - QuestRecord["index"]) > 0 then
-                QuestRecord["index"] = QuestRecord["index"] + 1
-                nr = nr - QuestRecord["index"]
-            end
-            LazyPig_SelectActiveQuest(nr, true)
+        elseif table.getn(AvailableQuest) > 0 then
+            -- Automatically select the first available quest if there are multiple quests
+            Original_SelectAvailableQuest(1);
+        elseif table.getn(ActiveQuest) > 0 then
+            -- Automatically select the first active quest if there are no available quests
+            Original_SelectActiveQuest(1);
         end
-    
     elseif event == "QUEST_PROGRESS" then
-        CompleteQuest()
+        CompleteQuest();
     elseif event == "QUEST_COMPLETE" and GetNumQuestChoices() == 0 then
-        GetQuestReward(0)
+        GetQuestReward(0);
     end
 end
 
