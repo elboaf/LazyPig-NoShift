@@ -1221,6 +1221,11 @@ function LazyPig_RecordQuest(qdetails)
 end
 
 function LazyPig_ReplyQuest(event)
+    -- Pause automation if shift is held down
+    if IsShiftKeyDown() then
+        return;
+    end
+
     -- Remove the IsShiftKeyDown() check so that the behavior is always active
     if QuestRecord["details"] then
         UIErrorsFrame:Clear();
@@ -1228,7 +1233,25 @@ function LazyPig_ReplyQuest(event)
     end
     
     if event == "GOSSIP_SHOW" then
-        if QuestRecord["details"] then
+        -- Check if there are any completed quests to turn in
+        local hasCompletedQuests = false;
+        for i = 1, GetNumActiveQuests() do
+            local isComplete = IsQuestCompletable(i);
+            if isComplete then
+                hasCompletedQuests = true;
+                break;
+            end
+        end
+
+        if hasCompletedQuests then
+            -- Automatically turn in the first completed quest
+            for i = 1, GetNumActiveQuests() do
+                if IsQuestCompletable(i) then
+                    SelectActiveQuest(i);
+                    return;
+                end
+            end
+        elseif QuestRecord["details"] then
             -- Replay the recorded quest if it exists
             for blockindex, blockmatch in pairs(ActiveQuest) do
                 if blockmatch == QuestRecord["details"] then
@@ -1250,7 +1273,25 @@ function LazyPig_ReplyQuest(event)
             Original_SelectGossipActiveQuest(1);
         end
     elseif event == "QUEST_GREETING" then
-        if QuestRecord["details"] then
+        -- Check if there are any completed quests to turn in
+        local hasCompletedQuests = false;
+        for i = 1, GetNumActiveQuests() do
+            local isComplete = IsQuestCompletable(i);
+            if isComplete then
+                hasCompletedQuests = true;
+                break;
+            end
+        end
+
+        if hasCompletedQuests then
+            -- Automatically turn in the first completed quest
+            for i = 1, GetNumActiveQuests() do
+                if IsQuestCompletable(i) then
+                    SelectActiveQuest(i);
+                    return;
+                end
+            end
+        elseif QuestRecord["details"] then
             -- Replay the recorded quest if it exists
             for blockindex, blockmatch in pairs(ActiveQuest) do
                 if blockmatch == QuestRecord["details"] then
